@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   # Step 1: detect which apps changed (path filters)
   changes:
@@ -97,6 +101,11 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Lowercase repo name (GHCR requires it)
+        if: matrix.changed == 'true'
+        id: repo
+        run: echo "name=${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
+
       - name: Build & push image
         if: matrix.changed == 'true'
         uses: docker/build-push-action@v5
@@ -107,8 +116,8 @@ jobs:
             APP=${{ matrix.app }}
           push: ${{ github.event_name == 'push' }}
           tags: |
-            ghcr.io/${{ github.repository }}/${{ matrix.app }}:${{ github.sha }}
-            ghcr.io/${{ github.repository }}/${{ matrix.app }}:latest
+            ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.app }}:${{ github.sha }}
+            ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.app }}:latest
 
       # Replace with your actual deploy step (kubectl set image, ArgoCD, Helm, etc.)
       - name: Deploy to k8s
