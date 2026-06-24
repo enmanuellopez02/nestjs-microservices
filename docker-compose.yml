@@ -1,0 +1,65 @@
+services:
+  users-service:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      args:
+        APP: users-service
+    image: nestjs-ms/users-service:local
+    environment:
+      PORT: 3001
+    ports:
+      - "3001:3001"
+
+  products-service:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      args:
+        APP: products-service
+    image: nestjs-ms/products-service:local
+    environment:
+      PORT: 3002
+    ports:
+      - "3002:3002"
+
+  orders-service:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      args:
+        APP: orders-service
+    image: nestjs-ms/orders-service:local
+    environment:
+      PORT: 3003
+      USERS_SERVICE_HOST: users-service
+      USERS_SERVICE_PORT: 3001
+      PRODUCTS_SERVICE_HOST: products-service
+      PRODUCTS_SERVICE_PORT: 3002
+    ports:
+      - "3003:3003"
+    depends_on:
+      - users-service
+      - products-service
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      args:
+        APP: api-gateway
+    image: nestjs-ms/api-gateway:local
+    environment:
+      PORT: 3000
+      USERS_SERVICE_HOST: users-service
+      USERS_SERVICE_PORT: 3001
+      PRODUCTS_SERVICE_HOST: products-service
+      PRODUCTS_SERVICE_PORT: 3002
+      ORDERS_SERVICE_HOST: orders-service
+      ORDERS_SERVICE_PORT: 3003
+    ports:
+      - "3000:3000"
+    depends_on:
+      - users-service
+      - products-service
+      - orders-service

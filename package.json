@@ -1,0 +1,38 @@
+{
+  "name": "nestjs-microservices",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "nest build",
+    "build:gateway": "nest build api-gateway",
+    "build:users": "nest build users-service",
+    "build:products": "nest build products-service",
+    "build:orders": "nest build orders-service",
+    "start:gateway": "nest start api-gateway --watch",
+    "start:users": "nest start users-service --watch",
+    "start:products": "nest start products-service --watch",
+    "start:orders": "nest start orders-service --watch",
+    "start:gateway:prod": "node dist/apps/api-gateway/main",
+    "start:users:prod": "node dist/apps/users-service/main",
+    "start:products:prod": "node dist/apps/products-service/main",
+    "start:orders:prod": "node dist/apps/orders-service/main"
+  },
+  "dependencies": {
+    "@nestjs/common": "^10.3.0",
+    "@nestjs/core": "^10.3.0",
+    "@nestjs/microservices": "^10.3.0",
+    "@nestjs/platform-express": "^10.3.0",
+    "reflect-metadata": "^0.2.1",
+    "rxjs": "^7.8.1"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^10.3.0",
+    "@nestjs/schematics": "^10.1.0",
+    "@types/node": "^20.11.0",
+    "ts-loader": "^9.5.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3",
+    "webpack": "^5.90.0",
+    "webpack-node-externals": "^3.0.0"
+  }
+}
