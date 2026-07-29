@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users-service
+  namespace: demo
+  labels:
+    app: users-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: users-service
+  template:
+    metadata:
+      labels:
+        app: users-service
+    spec:
+      containers:
+        - name: users-service
+          image: nestjs-ms/users-service:local
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PORT
+              value: "3001"
+          ports:
+            - containerPort: 3001
+              name: tcp
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: users-service
+  namespace: demo
+spec:
+  selector:
+    app: users-service
+  ports:
+    - name: tcp
+      port: 3001
+      targetPort: 3001

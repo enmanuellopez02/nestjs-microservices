@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway
+  namespace: demo
+  labels:
+    app: api-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-gateway
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+    spec:
+      containers:
+        - name: api-gateway
+          image: nestjs-ms/api-gateway:local
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PORT
+              value: "3000"
+            - name: USERS_SERVICE_HOST
+              value: users-service
+            - name: USERS_SERVICE_PORT
+              value: "3001"
+            - name: PRODUCTS_SERVICE_HOST
+              value: products-service
+            - name: PRODUCTS_SERVICE_PORT
+              value: "3002"
+            - name: ORDERS_SERVICE_HOST
+              value: orders-service
+            - name: ORDERS_SERVICE_PORT
+              value: "3003"
+          ports:
+            - containerPort: 3000
+              name: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-gateway
+  namespace: demo
+spec:
+  selector:
+    app: api-gateway
+  ports:
+    - name: http
+      port: 80
+      targetPort: 3000

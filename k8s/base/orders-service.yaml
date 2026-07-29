@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-service
+  namespace: demo
+  labels:
+    app: orders-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: orders-service
+  template:
+    metadata:
+      labels:
+        app: orders-service
+    spec:
+      containers:
+        - name: orders-service
+          image: nestjs-ms/orders-service:local
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PORT
+              value: "3003"
+            - name: USERS_SERVICE_HOST
+              value: users-service
+            - name: USERS_SERVICE_PORT
+              value: "3001"
+            - name: PRODUCTS_SERVICE_HOST
+              value: products-service
+            - name: PRODUCTS_SERVICE_PORT
+              value: "3002"
+          ports:
+            - containerPort: 3003
+              name: tcp
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders-service
+  namespace: demo
+spec:
+  selector:
+    app: orders-service
+  ports:
+    - name: tcp
+      port: 3003
+      targetPort: 3003
